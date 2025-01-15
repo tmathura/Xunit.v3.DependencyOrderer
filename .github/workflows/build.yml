@@ -1,0 +1,73 @@
+name: Build & Test
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      base_version: ${{ steps.extract_version.outputs.base_version }}
+      full_version: ${{ steps.extract_version.outputs.full_version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Extract and Modify Version from .csproj
+        id: extract_version
+        run: |
+          # Extract the base version from the .csproj file
+          BASE_VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj)
+          # Append the run number to create the full version
+          FULL_VERSION="${BASE_VERSION}.${{ github.run_number }}"
+          # Write outputs to $GITHUB_OUTPUT
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
+          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update .csproj with Full Version
+        run: |
+          sed -i "s|<Version>.*</Version>|<Version>${{ steps.extract_version.outputs.full_version }}</Version>|" Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Solution
+        run: dotnet build --no-restore -c Release
+
+      - name: Run Unit Tests
+        run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Pack NuGet Package
+        run: dotnet pack Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj  -c Release --no-build --no-restore --output nuget-packages
+
+      - name: Rename NuGet Package to Use Base Version
+        run: |
+          mv nuget-packages/Xunit.v3.TestDependencyOrderer.${{ steps.extract_version.outputs.full_version }}.nupkg nuget-packages/Xunit.v3.TestDependencyOrderer.${{ steps.extract_version.outputs.base_version }}.nupkg
+
+      - name: Upload NuGet Package as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: nuget-packages
+
+  publish:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/publish.yml
+    permissions:
+      contents: write
+    with:
+      base_version: ${{ needs.build.outputs.base_version }}
+      full_version: ${{ needs.build.outputs.full_version }}

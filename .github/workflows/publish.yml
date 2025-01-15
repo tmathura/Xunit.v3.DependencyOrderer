@@ -1,0 +1,58 @@
+name: Publish
+
+on:
+  workflow_call:
+    inputs:
+      base_version:
+        required: true
+        type: string
+      full_version:
+        required: true
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download NuGet Package Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-packages
+          path: nuget-packages
+
+      - name: Generate Release Notes
+        run: |
+          git fetch --tags
+          # Determine the range for git log
+          if git describe --tags --abbrev=0 >/dev/null 2>&1; then
+            PREVIOUS_TAG=$(git describe --tags --abbrev=0)
+            echo "Previous tag found: $PREVIOUS_TAG"
+            git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s" > release-notes.txt
+          else
+            echo "No previous tags found. Using last 20 commits."
+            git log -n 20 --pretty=format:"- %s" > release-notes.txt
+          fi
+
+      - name: List NuGet Packages
+        run: ls -R nuget-packages
+
+      - name: Create GitHub Release and Upload NuGet Package
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ inputs.base_version }}-${{ github.run_number }}"
+          name: "Release v${{ inputs.base_version }}"
+          body_path: release-notes.txt
+          files: nuget-packages/*.nupkg
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Publish NuGet Package to NuGet.org
+#        run: dotnet nuget push nuget-packages/Xunit.v3.TestDependencyOrderer.${{ inputs.base_version }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
