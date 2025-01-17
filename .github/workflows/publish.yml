@@ -54,6 +54,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check if secret is set
+        run: |
+          if [ -z "${{ secrets.NUGET_API_KEY }}" ]; then
+            echo "Secret NUGET_API_KEY is not set or is empty."
+            exit 1
+          else
+            echo "Secret NUGET_API_KEY is set."
+          fi
+
       - name: Publish NuGet Package to NuGet.org - Xunit.v3.TestDependencyOrderer
         run: dotnet nuget push nuget-packages/Xunit.v3.TestDependencyOrderer.${{ inputs.base_version }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
 
