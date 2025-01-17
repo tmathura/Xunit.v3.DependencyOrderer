@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.v3.TestDependencyOrde
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.v3.TestDependencyOrderer.UnitTests", "Xunit.v3.TestDependencyOrderer.UnitTests\Xunit.v3.TestDependencyOrderer.UnitTests.csproj", "{28E6979C-3D69-2433-7A52-AFF3B2BD7360}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.v3.PriorityDependencyOrderer", "Xunit.v3.PriorityDependencyOrderer\Xunit.v3.PriorityDependencyOrderer.csproj", "{191A711A-A0FD-4456-9832-8B4E4FCFE7FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.v3.PriorityDependencyOrderer.UnitTests", "Xunit.v3.PriorityDependencyOrderer.UnitTests\Xunit.v3.PriorityDependencyOrderer.UnitTests.csproj", "{ADAEDE91-B313-4D30-8249-52B40C1073CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{28E6979C-3D69-2433-7A52-AFF3B2BD7360}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28E6979C-3D69-2433-7A52-AFF3B2BD7360}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28E6979C-3D69-2433-7A52-AFF3B2BD7360}.Release|Any CPU.Build.0 = Release|Any CPU
+		{191A711A-A0FD-4456-9832-8B4E4FCFE7FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{191A711A-A0FD-4456-9832-8B4E4FCFE7FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{191A711A-A0FD-4456-9832-8B4E4FCFE7FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{191A711A-A0FD-4456-9832-8B4E4FCFE7FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADAEDE91-B313-4D30-8249-52B40C1073CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADAEDE91-B313-4D30-8249-52B40C1073CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADAEDE91-B313-4D30-8249-52B40C1073CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADAEDE91-B313-4D30-8249-52B40C1073CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

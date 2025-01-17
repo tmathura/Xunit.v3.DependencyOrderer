@@ -29,7 +29,7 @@ jobs:
         id: extract_version
         run: |
           # Extract the base version from the .csproj file
-          BASE_VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj)
+          BASE_VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" Directory.Build.props)
           # Append the run number to create the full version
           FULL_VERSION="${BASE_VERSION}.${{ github.run_number }}"
           # Write outputs to $GITHUB_OUTPUT
@@ -38,7 +38,7 @@ jobs:
 
       - name: Update .csproj with Full Version
         run: |
-          sed -i "s|<Version>.*</Version>|<Version>${{ steps.extract_version.outputs.full_version }}</Version>|" Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj
+          sed -i "s|<Version>.*</Version>|<Version>${{ steps.extract_version.outputs.full_version }}</Version>|" Directory.Build.props
 
       - name: Restore Dependencies
         run: dotnet restore
@@ -49,10 +49,17 @@ jobs:
       - name: Run Unit Tests
         run: dotnet test -c Release --no-build --verbosity normal
 
-      - name: Pack NuGet Package
+      - name: Pack NuGet Package - Xunit.v3.PriorityDependencyOrderer
+        run: dotnet pack Xunit.v3.PriorityDependencyOrderer/Xunit.v3.PriorityDependencyOrderer.csproj  -c Release --no-build --no-restore --output nuget-packages
+
+      - name: Rename NuGet Package to Use Base Version - Xunit.v3.PriorityDependencyOrderer
+        run: |
+          mv nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ steps.extract_version.outputs.full_version }}.nupkg nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ steps.extract_version.outputs.base_version }}.nupkg
+
+      - name: Pack NuGet Package - Xunit.v3.TestDependencyOrderer
         run: dotnet pack Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj  -c Release --no-build --no-restore --output nuget-packages
 
-      - name: Rename NuGet Package to Use Base Version
+      - name: Rename NuGet Package to Use Base Version - Xunit.v3.TestDependencyOrderer
         run: |
           mv nuget-packages/Xunit.v3.TestDependencyOrderer.${{ steps.extract_version.outputs.full_version }}.nupkg nuget-packages/Xunit.v3.TestDependencyOrderer.${{ steps.extract_version.outputs.base_version }}.nupkg
 
@@ -64,7 +71,7 @@ jobs:
 
   publish:
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
     uses: ./.github/workflows/publish.yml
     permissions:
       contents: write
