@@ -54,5 +54,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Publish NuGet Package to NuGet.org
-#        run: dotnet nuget push nuget-packages/Xunit.v3.TestDependencyOrderer.${{ inputs.base_version }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      - name: Publish NuGet Package to NuGet.org - Xunit.v3.TestDependencyOrderer
+        run: dotnet nuget push nuget-packages/Xunit.v3.TestDependencyOrderer.${{ inputs.base_version }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+      - name: Publish NuGet Package to NuGet.org - Xunit.v3.PriorityDependencyOrderer
+        run: dotnet nuget push nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ inputs.base_version }}.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

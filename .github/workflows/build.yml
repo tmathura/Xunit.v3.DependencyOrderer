@@ -49,19 +49,19 @@ jobs:
       - name: Run Unit Tests
         run: dotnet test -c Release --no-build --verbosity normal
 
-      - name: Pack NuGet Package - Xunit.v3.PriorityDependencyOrderer
-        run: dotnet pack Xunit.v3.PriorityDependencyOrderer/Xunit.v3.PriorityDependencyOrderer.csproj  -c Release --no-build --no-restore --output nuget-packages
-
-      - name: Rename NuGet Package to Use Base Version - Xunit.v3.PriorityDependencyOrderer
-        run: |
-          mv nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ steps.extract_version.outputs.full_version }}.nupkg nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ steps.extract_version.outputs.base_version }}.nupkg
-
       - name: Pack NuGet Package - Xunit.v3.TestDependencyOrderer
         run: dotnet pack Xunit.v3.TestDependencyOrderer/Xunit.v3.TestDependencyOrderer.csproj  -c Release --no-build --no-restore --output nuget-packages
 
       - name: Rename NuGet Package to Use Base Version - Xunit.v3.TestDependencyOrderer
         run: |
           mv nuget-packages/Xunit.v3.TestDependencyOrderer.${{ steps.extract_version.outputs.full_version }}.nupkg nuget-packages/Xunit.v3.TestDependencyOrderer.${{ steps.extract_version.outputs.base_version }}.nupkg
+
+      - name: Pack NuGet Package - Xunit.v3.PriorityDependencyOrderer
+        run: dotnet pack Xunit.v3.PriorityDependencyOrderer/Xunit.v3.PriorityDependencyOrderer.csproj  -c Release --no-build --no-restore --output nuget-packages
+
+      - name: Rename NuGet Package to Use Base Version - Xunit.v3.PriorityDependencyOrderer
+        run: |
+          mv nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ steps.extract_version.outputs.full_version }}.nupkg nuget-packages/Xunit.v3.PriorityDependencyOrderer.${{ steps.extract_version.outputs.base_version }}.nupkg
 
       - name: Upload NuGet Package as Artifact
         uses: actions/upload-artifact@v4
@@ -71,7 +71,7 @@ jobs:
 
   publish:
     needs: build
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/publish.yml
     permissions:
       contents: write

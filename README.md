@@ -2,11 +2,12 @@
 
 ## Overview
 
-`Xunit.v3.DependencyOrderer` is a .NET library that provides functionality to order xUnit tests based on their dependencies. This library is particularly useful for scenarios where certain tests need to be executed in a specific order due to dependencies between them.
+`Xunit.v3.DependencyOrderer` is a .NET library that provides functionality to order xUnit tests based on their dependencies/priority. This library is particularly useful for scenarios where certain tests need to be executed in a specific order due to dependencies between them.
 
 ## Features
 
 - **Test Dependency Management**: Define dependencies between classes/test methods to ensure they are executed in the correct order.
+- **Priority Dependency Management**: Define priority between test methods to ensure they are executed in the prioritized order.
 - **Integration with xUnit v3**: Seamlessly integrates with xUnit v3, leveraging its extensibility features.
 - **Support for .NET 8**: Targets .NET 8, ensuring compatibility with the latest .NET features and improvements.
 
@@ -19,9 +20,16 @@
 
 ### Installation
 
-To install the `Xunit.v3.TestDependencyOrderer` library, add the following package reference to your project file:
+To install the `Xunit.v3.TestDependencyOrderer` or `Xunit.v3.PriorityDependencyOrderer` library, add the following package reference to your project file:
+
+```xml
+<PackageReference Include="Xunit.v3.TestDependencyOrderer" Version="1.0.0" />
+<PackageReference Include="Xunit.v3.PriorityDependencyOrderer" Version="1.0.0" />
+```
 
 ### Usage
+
+#### Xunit.v3.TestDependencyOrderer
 
 1. **Define Class Dependencies**: Use the `[DependsOnClass]` attribute to specify dependencies between classes.
 
@@ -29,7 +37,15 @@ To install the `Xunit.v3.TestDependencyOrderer` library, add the following packa
 
 3. **Run Tests**: Execute your tests using the xUnit test runner. The tests will be executed in the order defined by their dependencies.
 
+#### Xunit.v3.PriorityDependencyOrderer
+
+1. **Define Test Priorities**: Use the `[Priority]` attribute to specify the priority of test methods. Lower priority values are executed first.
+
+2. **Run Tests**: Execute your tests using the xUnit test runner. The tests will be executed in the order defined by their priorities.
+
 ### Example
+
+#### Xunit.v3.TestDependencyOrderer
 
 ```cs
 using Xunit;
@@ -62,9 +78,39 @@ public class MyTestClass2
 }
 ```
 
+#### Xunit.v3.PriorityDependencyOrderer
+
+```cs
+using Xunit;
+using Xunit.v3.PriorityDependencyOrderer;
+
+public class MyTestClass
+{
+    [Fact, Priority(1)]
+    public void Test1()
+    {
+        // Test code here
+    }
+
+    [Fact, Priority(2)]
+    public void Test2()
+    {
+        // Test code here
+    }
+
+    [Fact, Priority(0)]
+    public void Test3()
+    {
+        // Test code here
+    }
+}
+```
+
 ### Project Structure
 
-- **Xunit.v3.TestDependencyOrderer**: Contains the core library for managing test dependencies.
+- **Xunit.v3.PriorityDependencyOrderer**: Contains the core library for managing test priority ordering.
+- **Xunit.v3.PriorityDependencyOrderer.UnitTests**: Contains unit tests for the `Xunit.v3.PriorityDependencyOrderer` library.
+- **Xunit.v3.TestDependencyOrderer**: Contains the core library for managing class/test dependencies ordering.
 - **Xunit.v3.TestDependencyOrderer.UnitTests**: Contains unit tests for the `Xunit.v3.TestDependencyOrderer` library.
 
 ### Contributing
